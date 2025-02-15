@@ -1,11 +1,28 @@
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, StyleSheet, Platform } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import DailyIntakeScreen from '../../screens/DailyIntakeScreen';
+import AddFoodItemScreen from '../../screens/AddFoodItemScreen';
+import HomeScreen from '../../screens/HomeScreen';
 
-export default function HomeScreen() {
+const Tab = createBottomTabNavigator();
+
+export default function AppTabs() {
+  return (
+    <Tab.Navigator initialRouteName="Home">
+      <Tab.Screen name="Home" component={HomeScreenComponent} />
+      <Tab.Screen name="Daily Intake" component={DailyIntakeScreen} />
+      <Tab.Screen name="Add Food Item" component={AddFoodItemScreen} />
+    </Tab.Navigator>
+  );
+}
+
+function HomeScreenComponent() {
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
