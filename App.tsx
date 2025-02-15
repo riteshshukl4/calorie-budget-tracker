@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { FoodProvider } from './context/FoodContext';
 import AppTabs from './app/(tabs)/index';
 
 const App = () => {
