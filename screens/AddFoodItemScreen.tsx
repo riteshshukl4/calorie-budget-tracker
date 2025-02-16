@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, Alert } from 'react-native';
+import { View, TextInput, Button, Alert } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
 
 export default function AddFoodItemScreen() {

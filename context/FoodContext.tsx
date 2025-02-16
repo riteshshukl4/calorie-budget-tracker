@@ -72,6 +72,7 @@ export const FoodProvider = ({ children }: { children: ReactNode }) => {
 
 export const useFoodContext = () => {
   const context = useContext(FoodContext);
+  console.log('useFoodContext called, context:', context); // Add this line for logging
   if (!context) {
     throw new Error('useFoodContext must be used within a FoodProvider');
   }
