@@ -2,7 +2,7 @@ import React, { createContext, useReducer, useContext, ReactNode, useEffect } fr
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface FoodItem {
-  id: string;
+  id: number;
   name: string;
   calories: number;
   protein: number;
@@ -15,7 +15,7 @@ type State = {
 
 type Action =
   | { type: 'ADD_FOOD_ITEM'; payload: FoodItem }
-  | { type: 'REMOVE_FOOD_ITEM'; payload: string }
+  | { type: 'REMOVE_FOOD_ITEM'; payload: number } // Changed payload type from string to number
   | { type: 'SET_FOOD_ITEMS'; payload: FoodItem[] };
 
 const initialState: State = {
@@ -72,7 +72,6 @@ export const FoodProvider = ({ children }: { children: ReactNode }) => {
 
 export const useFoodContext = () => {
   const context = useContext(FoodContext);
-  console.log('useFoodContext called, context:', context); // Add this line for logging
   if (!context) {
     throw new Error('useFoodContext must be used within a FoodProvider');
   }

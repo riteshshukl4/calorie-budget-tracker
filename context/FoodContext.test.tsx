@@ -15,7 +15,7 @@ describe('FoodContext', () => {
     act(() => {
       result.current.dispatch({
         type: 'ADD_FOOD_ITEM',
-        payload: { id: '1', name: 'Apple', calories: 95, protein: 0.5, cost: 0.5 },
+        payload: { id: 1, name: 'Apple', calories: 95, protein: 0.5, cost: 0.5 },
       });
     });
 
@@ -30,19 +30,19 @@ describe('FoodContext', () => {
     act(() => {
       result.current.dispatch({
         type: 'ADD_FOOD_ITEM',
-        payload: { id: '1', name: 'Apple', calories: 95, protein: 0.5, cost: 0.5 },
+        payload: { id: 1, name: 'Apple', calories: 95, protein: 0.5, cost: 0.5 },
       });
     });
 
     act(() => {
-      result.current.dispatch({ type: 'REMOVE_FOOD_ITEM', payload: '1' });
+      result.current.dispatch({ type: 'REMOVE_FOOD_ITEM', payload: 1 });
     });
 
     expect(result.current.state.foodItems).toHaveLength(0);
   });
 
   it('should set food items from storage', async () => {
-    const storedFoodItems = [{ id: '1', name: 'Banana', calories: 105, protein: 1.3, cost: 0.3 }];
+    const storedFoodItems = [{ id: 1, name: 'Banana', calories: 105, protein: 1.3, cost: 0.3 }];
     jest.spyOn(AsyncStorage, 'getItem').mockResolvedValueOnce(JSON.stringify(storedFoodItems));
 
     const wrapper = ({ children }: { children: React.ReactNode }) => <FoodProvider>{children}</FoodProvider>;
