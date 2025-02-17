@@ -16,7 +16,7 @@ export default function AddFoodItemScreen() {
     }
 
     const newFoodItem = {
-      id: Date.now().toString(),
+      id: Date.now(),
       name,
       calories: parseFloat(calories),
       protein: parseFloat(protein),
