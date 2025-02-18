@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
 
 const AddFoodItemScreen = () => {
@@ -69,8 +69,12 @@ const AddFoodItemScreen = () => {
         onChangeText={setCost}
         keyboardType="numeric"
       />
-      <Button title="Add Food" onPress={handleAddFood} />
-      <Button title="Quick Add" onPress={handleQuickAdd} />
+      <TouchableOpacity style={styles.button} onPress={handleAddFood}>
+        <Text style={styles.buttonText}>Add Food</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, styles.quickAddButton]} onPress={handleQuickAdd}>
+        <Text style={styles.buttonText}>Quick Add</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -79,18 +83,38 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: '#f8f9fa',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 24,
+    color: '#333',
+    textAlign: 'center',
   },
   input: {
-    height: 40,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 8,
     marginBottom: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  quickAddButton: {
+    backgroundColor: '#28a745',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

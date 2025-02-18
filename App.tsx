@@ -14,7 +14,11 @@ export default function App() {
     <FoodProvider>
       <NavigationContainer>
         <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
-          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen 
+            name="Home" 
+            component={HomeScreen} 
+            options={{ headerTitle: 'Calorie Budget Tracker' }} 
+          />
           <Tab.Screen name="Add Food" component={AddFoodItemScreen} />
           <Tab.Screen name="Quick Add" component={QuickAddScreen} />
         </Tab.Navigator>
