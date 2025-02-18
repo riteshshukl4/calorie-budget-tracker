@@ -2,11 +2,16 @@ import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
 
-const AddedFoodItemsScreen = () => {
-  const { state: { foodItems }, dispatch } = useFoodContext();
+const QuickAddScreen = () => {
+  const { state: { quickAddItems }, dispatch } = useFoodContext();
 
   const handleDelete = (id: number) => {
-    dispatch({ type: 'REMOVE_FOOD_ITEM', payload: id });
+    dispatch({ type: 'REMOVE_QUICK_ADD_ITEM', payload: id });
+  };
+
+  const handleAddToHome = (item: { id: number; name: string; calories: number; protein: number; cost: number }) => {
+    dispatch({ type: 'ADD_FOOD_ITEM', payload: item });
+    handleDelete(item.id);
   };
 
   const renderItem = ({ item }: { item: { id: number; name: string; calories: number; protein: number; cost: number } }) => (
@@ -17,20 +22,25 @@ const AddedFoodItemsScreen = () => {
         <Text style={styles.itemSubText}>Protein: {item.protein}g</Text>
         <Text style={styles.itemSubText}>Cost: ${item.cost}</Text>
       </View>
-      <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => handleAddToHome(item)} style={styles.addButton}>
+          <Text style={styles.addButtonText}>Add</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteButton}>
+          <Text style={styles.deleteButtonText}>Delete</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Added Food Items</Text>
-      {foodItems.length === 0 ? (
-        <Text style={styles.noItemsText}>No added items yet.</Text>
+      <Text style={styles.title}>Quick Add Items</Text>
+      {quickAddItems.length === 0 ? (
+        <Text style={styles.noItemsText}>No quick add items yet.</Text>
       ) : (
         <FlatList
-          data={foodItems}
+          data={quickAddItems}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
         />
@@ -74,6 +84,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+  },
+  addButton: {
+    backgroundColor: '#4CAF50',
+    padding: 8,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
   deleteButton: {
     backgroundColor: '#ff4444',
     padding: 8,
@@ -85,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddedFoodItemsScreen;
+export default QuickAddScreen;

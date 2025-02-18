@@ -9,20 +9,27 @@ interface FoodItem {
   cost: number;
 }
 
-type State = {
+interface State {
   foodItems: FoodItem[];
-};
+  quickAddItems: FoodItem[];
+}
 
 type Action =
   | { type: 'ADD_FOOD_ITEM'; payload: FoodItem }
-  | { type: 'REMOVE_FOOD_ITEM'; payload: number } // Changed payload type from string to number
-  | { type: 'SET_FOOD_ITEMS'; payload: FoodItem[] };
+  | { type: 'REMOVE_FOOD_ITEM'; payload: number }
+  | { type: 'SET_FOOD_ITEMS'; payload: FoodItem[] }
+  | { type: 'ADD_QUICK_ADD_ITEM'; payload: FoodItem }
+  | { type: 'REMOVE_QUICK_ADD_ITEM'; payload: number };
 
 const initialState: State = {
   foodItems: [],
+  quickAddItems: [],
 };
 
-const FoodContext = createContext<{ state: State; dispatch: React.Dispatch<Action> } | undefined>(undefined);
+const FoodContext = createContext<{ state: State; dispatch: React.Dispatch<Action> }>({
+  state: initialState,
+  dispatch: () => null,
+});
 
 const foodReducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -32,12 +39,20 @@ const foodReducer = (state: State, action: Action): State => {
       return { ...state, foodItems: state.foodItems.filter(item => item.id !== action.payload) };
     case 'SET_FOOD_ITEMS':
       return { ...state, foodItems: action.payload };
+    case 'ADD_QUICK_ADD_ITEM':
+      return { ...state, quickAddItems: [...state.quickAddItems, action.payload] };
+    case 'REMOVE_QUICK_ADD_ITEM':
+      return { ...state, quickAddItems: state.quickAddItems.filter(item => item.id !== action.payload) };
     default:
       return state;
   }
 };
 
-export const FoodProvider = ({ children }: { children: ReactNode }) => {
+interface FoodProviderProps {
+  children: ReactNode;
+}
+
+export const FoodProvider: React.FC<FoodProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(foodReducer, initialState);
 
   useEffect(() => {
@@ -67,13 +82,11 @@ export const FoodProvider = ({ children }: { children: ReactNode }) => {
     saveFoodItems();
   }, [state.foodItems]);
 
-  return <FoodContext.Provider value={{ state, dispatch }}>{children}</FoodContext.Provider>;
+  return (
+    <FoodContext.Provider value={{ state, dispatch }}>
+      {children}
+    </FoodContext.Provider>
+  );
 };
 
-export const useFoodContext = () => {
-  const context = useContext(FoodContext);
-  if (!context) {
-    throw new Error('useFoodContext must be used within a FoodProvider');
-  }
-  return context;
-};
+export const useFoodContext = () => useContext(FoodContext);
