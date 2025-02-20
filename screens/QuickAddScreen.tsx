@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
+import { useCurrency } from '../context/CurrencyContext';
 
 const QuickAddScreen = () => {
   const { state: { quickAddItems }, dispatch } = useFoodContext();
+  const { currency } = useCurrency();
 
   const handleDelete = (id: number) => {
     dispatch({ type: 'REMOVE_QUICK_ADD_ITEM', payload: id });
@@ -35,7 +37,8 @@ const QuickAddScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Quick Add Items</Text>
+      <Text style={styles.title}>Quick Add Screen</Text>
+      <Text style={styles.currency}>Current Currency: {currency}</Text>
       {quickAddItems.length === 0 ? (
         <Text style={styles.noItemsText}>No quick add items yet.</Text>
       ) : (
@@ -53,10 +56,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#333',
+    fontFamily: 'Roboto_700Bold',
     marginBottom: 16,
   },
   noItemsText: {
@@ -105,6 +113,11 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: '#fff',
     fontSize: 14,
+  },
+  currency: {
+    fontSize: 18,
+    color: '#333',
+    marginTop: 20,
   },
 });
 

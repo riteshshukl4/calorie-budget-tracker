@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
+import { useCurrency } from '../context/CurrencyContext';
+import { useTheme } from '../context/ThemeContext';
 
 const AddFoodItemScreen = () => {
   const { dispatch } = useFoodContext();
+  const { currency } = useCurrency();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
   const [name, setName] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
@@ -40,8 +45,8 @@ const AddFoodItemScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add Food Item</Text>
+    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+      <Text style={[styles.title, isDarkMode && styles.darkTitle]}>Add Food Item</Text>
       <TextInput
         style={styles.input}
         placeholder="Name"
@@ -64,7 +69,7 @@ const AddFoodItemScreen = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Cost ($)"
+        placeholder={`Cost (${currency})`}
         value={cost}
         onChangeText={setCost}
         keyboardType="numeric"
@@ -75,6 +80,7 @@ const AddFoodItemScreen = () => {
       <TouchableOpacity style={[styles.button, styles.quickAddButton]} onPress={handleQuickAdd}>
         <Text style={styles.buttonText}>Quick Add</Text>
       </TouchableOpacity>
+      <Text style={[styles.currency, isDarkMode && styles.darkCurrency]}>Current Currency: {currency}</Text>
     </View>
   );
 };
@@ -85,12 +91,19 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f8f9fa',
   },
+  darkContainer: {
+    backgroundColor: '#333',
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 24,
     color: '#333',
     textAlign: 'center',
+    fontFamily: 'Roboto_700Bold',
+  },
+  darkTitle: {
+    color: '#fff',
   },
   input: {
     height: 50,
@@ -100,6 +113,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 16,
     backgroundColor: '#fff',
+    fontFamily: 'Roboto_400Regular',
   },
   button: {
     backgroundColor: '#007bff',
@@ -115,6 +129,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold',
+  },
+  currency: {
+    fontSize: 18,
+    color: '#333',
+    marginTop: 20,
+  },
+  darkCurrency: {
+    color: '#fff',
   },
 });
 

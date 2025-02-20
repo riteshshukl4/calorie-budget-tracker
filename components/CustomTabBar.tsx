@@ -2,18 +2,17 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../context/ThemeContext';
 
-const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigation }) => {
+const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
+
   return (
-    <View style={styles.tabBar}>
+    <View style={[styles.tabBar, isDarkMode && styles.darkTabBar]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label: string =
-          typeof options.tabBarLabel === 'string'
-            ? options.tabBarLabel
-            : typeof options.title === 'string'
-            ? options.title
-            : route.name;
+        const label = typeof options.tabBarLabel === 'string' ? options.tabBarLabel : options.title !== undefined ? options.title : route.name;
 
         const isFocused = state.index === index;
 
@@ -36,27 +35,38 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
           });
         };
 
-        const iconName = {
-          Home: 'home',
-          'Daily Intake': 'nutrition',
-          'Add Food': 'add-circle',
-          'Added Foods': 'list',
-        }[route.name] as keyof typeof Ionicons.glyphMap || 'home';
+        const iconName = (routeName: string, focused: boolean) => {
+          switch (routeName) {
+            case 'Home':
+              return focused ? 'home' : 'home-outline';
+            case 'Quick Add':
+              return focused ? 'fast-food' : 'fast-food-outline';
+            case 'Add Food':
+              return focused ? 'add-circle' : 'add-circle-outline';
+            case 'Statistics':
+              return focused ? 'stats-chart' : 'stats-chart-outline';
+            case 'Settings':
+              return focused ? 'settings' : 'settings-outline';
+            default:
+              return 'ellipse';
+          }
+        };
+
+        const iconColor = isFocused ? (isDarkMode ? '#fff' : '#673ab7') : (isDarkMode ? '#aaa' : '#222');
+        const textColor = isFocused ? (isDarkMode ? '#fff' : '#673ab7') : (isDarkMode ? '#aaa' : '#222');
 
         return (
           <TouchableOpacity
-            key={index}
+            key={route.key}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
             onPress={onPress}
             onLongPress={onLongPress}
-            style={[styles.tab, isFocused && styles.focusedTab]}
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
           >
-            <Ionicons name={iconName} size={24} color={isFocused ? '#673ab7' : '#222'} />
-            <Text style={{ color: isFocused ? '#673ab7' : '#222', marginTop: 4 }}>
-              {label}
-            </Text>
+            <Ionicons name={iconName(route.name, isFocused)} size={24} color={iconColor} />
+            <Text style={{ color: textColor }}>{label as string}</Text>
           </TouchableOpacity>
         );
       })}
@@ -71,6 +81,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#ddd',
+  },
+  darkTabBar: {
+    backgroundColor: '#333',
+    borderTopColor: '#555',
   },
   tab: {
     flex: 1,

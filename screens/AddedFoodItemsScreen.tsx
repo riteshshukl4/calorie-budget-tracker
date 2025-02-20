@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
+import { useCurrency } from '../context/CurrencyContext';
 
 const AddedFoodItemsScreen = () => {
   const { state: { foodItems }, dispatch } = useFoodContext();
+  const { currency } = useCurrency();
 
   const handleDelete = (id: number) => {
     dispatch({ type: 'REMOVE_FOOD_ITEM', payload: id });
@@ -26,6 +28,7 @@ const AddedFoodItemsScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Added Food Items</Text>
+      <Text style={styles.currency}>Current Currency: {currency}</Text>
       {foodItems.length === 0 ? (
         <Text style={styles.noItemsText}>No added items yet.</Text>
       ) : (
@@ -82,6 +85,11 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     color: '#fff',
     fontSize: 14,
+  },
+  currency: {
+    fontSize: 18,
+    color: '#333',
+    marginTop: 20,
   },
 });
 

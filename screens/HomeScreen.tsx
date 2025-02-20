@@ -1,9 +1,14 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
+import { useCurrency } from '../context/CurrencyContext';
+import { useTheme } from '../context/ThemeContext';
 
 const HomeScreen = () => {
   const { state: { foodItems }, dispatch } = useFoodContext();
+  const { currency } = useCurrency();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
 
   const totalCost = foodItems.reduce((sum, item) => sum + item.cost, 0);
   const totalCalories = foodItems.reduce((sum, item) => sum + item.calories, 0);
@@ -14,12 +19,12 @@ const HomeScreen = () => {
   };
 
   const renderItem = ({ item }: { item: { id: number; name: string; calories: number; protein: number; cost: number } }) => (
-    <View style={styles.item}>
+    <View style={[styles.item, isDarkMode && styles.darkItem]}>
       <View style={styles.itemDetails}>
-        <Text style={styles.itemText}>{item.name}</Text>
-        <Text style={styles.itemSubText}>Calories: {item.calories}</Text>
-        <Text style={styles.itemSubText}>Protein: {item.protein}g</Text>
-        <Text style={styles.itemSubText}>Cost: ${item.cost}</Text>
+        <Text style={[styles.itemText, isDarkMode && styles.darkItemText]}>{item.name}</Text>
+        <Text style={[styles.itemSubText, isDarkMode && styles.darkItemSubText]}>Calories: {item.calories}</Text>
+        <Text style={[styles.itemSubText, isDarkMode && styles.darkItemSubText]}>Protein: {item.protein}g</Text>
+        <Text style={[styles.itemSubText, isDarkMode && styles.darkItemSubText]}>Cost: {currency}{item.cost}</Text>
       </View>
       <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteButton}>
         <Text style={styles.deleteButtonText}>Delete</Text>
@@ -28,28 +33,26 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome User</Text>
-      
+    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
       <View style={styles.infoContainer}>
-        <Text style={styles.infoText}>Money Spent Today</Text>
-        <Text style={styles.infoValue}>${totalCost.toFixed(2)}</Text>
+        <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Spent Today</Text>
+        <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{totalCost.toFixed(2)}</Text>
       </View>
 
       <View style={styles.statsContainer}>
         <View style={styles.statBlock}>
-          <Text style={styles.statText}>Calories Consumed</Text>
-          <Text style={styles.statValue}>{totalCalories}</Text>
+          <Text style={[styles.statText, isDarkMode && styles.darkStatText]}>Calories Consumed</Text>
+          <Text style={[styles.statValue, isDarkMode && styles.darkStatValue]}>{totalCalories}</Text>
         </View>
         <View style={styles.statBlock}>
-          <Text style={styles.statText}>Protein Intake</Text>
-          <Text style={styles.statValue}>{totalProtein}g</Text>
+          <Text style={[styles.statText, isDarkMode && styles.darkStatText]}>Protein Intake</Text>
+          <Text style={[styles.statValue, isDarkMode && styles.darkStatValue]}>{totalProtein}g</Text>
         </View>
       </View>
 
-      <Text style={styles.addedFoodTitle}>Added Food Items</Text>
+      <Text style={[styles.addedFoodTitle, isDarkMode && styles.darkAddedFoodTitle]}>Added Food Items</Text>
       {foodItems.length === 0 ? (
-        <Text style={styles.noItemsText}>No added items yet.</Text>
+        <Text style={[styles.noItemsText, isDarkMode && styles.darkNoItemsText]}>No added items yet.</Text>
       ) : (
         <FlatList
           data={foodItems}
@@ -64,15 +67,13 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f8f9fa',
     padding: 16,
   },
-  welcome: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
-    marginBottom: 16,
+  darkContainer: {
+    backgroundColor: '#333',
   },
   infoContainer: {
     alignItems: 'center',
@@ -87,12 +88,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#333',
+  },
+  darkInfoText: {
+    color: '#fff',
   },
   infoValue: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 8,
+    color: '#333',
+  },
+  darkInfoValue: {
+    color: '#fff',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -110,22 +119,37 @@ const styles = StyleSheet.create({
   statText: {
     fontSize: 16,
     marginBottom: 8,
+    color: '#333',
+  },
+  darkStatText: {
+    color: '#fff',
   },
   statValue: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#333',
+  },
+  darkStatValue: {
+    color: '#fff',
   },
   addedFoodTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 24,
     marginBottom: 16,
+    color: '#333',
+  },
+  darkAddedFoodTitle: {
+    color: '#fff',
   },
   noItemsText: {
     fontSize: 18,
     color: '#888',
     textAlign: 'center',
     marginTop: 20,
+  },
+  darkNoItemsText: {
+    color: '#aaa',
   },
   item: {
     flexDirection: 'row',
@@ -136,16 +160,26 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     width: '100%',
   },
+  darkItem: {
+    borderBottomColor: '#555',
+  },
   itemDetails: {
     flex: 1,
   },
   itemText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#333',
+  },
+  darkItemText: {
+    color: '#fff',
   },
   itemSubText: {
     fontSize: 14,
     color: '#555',
+  },
+  darkItemSubText: {
+    color: '#aaa',
   },
   deleteButton: {
     backgroundColor: '#ff4444',
