@@ -37,10 +37,8 @@ const QuickAddScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Quick Add Screen</Text>
-      <Text style={styles.currency}>Current Currency: {currency}</Text>
       {quickAddItems.length === 0 ? (
-        <Text style={styles.noItemsText}>No quick add items yet.</Text>
+        <Text style={styles.noItemsText}>No quick items added yet :(</Text>
       ) : (
         <FlatList
           data={quickAddItems}

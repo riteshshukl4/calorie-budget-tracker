@@ -21,6 +21,7 @@ const AddFoodItemScreen = () => {
       calories: parseFloat(calories),
       protein: parseFloat(protein),
       cost: parseFloat(cost),
+      date: new Date().toISOString(),
     };
     dispatch({ type: 'ADD_FOOD_ITEM', payload: newFoodItem });
     setName('');
@@ -36,6 +37,7 @@ const AddFoodItemScreen = () => {
       calories: parseFloat(calories),
       protein: parseFloat(protein),
       cost: parseFloat(cost),
+      date: new Date().toISOString(),
     };
     dispatch({ type: 'ADD_QUICK_ADD_ITEM', payload: newQuickAddItem });
     setName('');
@@ -48,28 +50,32 @@ const AddFoodItemScreen = () => {
     <View style={[styles.container, isDarkMode && styles.darkContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkTitle]}>Add Food Item</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && styles.darkInput]}
         placeholder="Name"
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         value={name}
         onChangeText={setName}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && styles.darkInput]}
         placeholder="Calories"
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         value={calories}
         onChangeText={setCalories}
         keyboardType="numeric"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && styles.darkInput]}
         placeholder="Protein (g)"
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         value={protein}
         onChangeText={setProtein}
         keyboardType="numeric"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, isDarkMode && styles.darkInput]}
         placeholder={`Cost (${currency})`}
+        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
         value={cost}
         onChangeText={setCost}
         keyboardType="numeric"
@@ -115,6 +121,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     fontFamily: 'Roboto_400Regular',
   },
+  darkInput: {
+    borderColor: '#555',
+    backgroundColor: '#444',
+    color: '#fff',
+  },
   button: {
     backgroundColor: '#007bff',
     paddingVertical: 12,
@@ -135,6 +146,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
     marginTop: 20,
+    textAlign: 'center',
   },
   darkCurrency: {
     color: '#fff',

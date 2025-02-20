@@ -2,6 +2,7 @@ import React, { createContext, useReducer, useContext, ReactNode, useEffect } fr
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface FoodItem {
+  date: string;
   id: number;
   name: string;
   calories: number;

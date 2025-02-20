@@ -1,18 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useTheme } from '../context/ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const { state: { foodItems }, dispatch } = useFoodContext();
   const { currency } = useCurrency();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
+  const [dailyBudget, setDailyBudget] = useState(0);
+
+  useEffect(() => {
+    // Fetch the daily budget from settings or context
+    // For simplicity, let's assume it's stored in local storage
+    const fetchDailyBudget = async () => {
+      const budget = await AsyncStorage.getItem('dailyBudget');
+      if (budget) {
+        setDailyBudget(parseFloat(budget));
+      }
+    };
+    fetchDailyBudget();
+  }, []);
 
   const totalCost = foodItems.reduce((sum, item) => sum + item.cost, 0);
   const totalCalories = foodItems.reduce((sum, item) => sum + item.calories, 0);
   const totalProtein = foodItems.reduce((sum, item) => sum + item.protein, 0);
+  const moneyLeft = dailyBudget - totalCost;
 
   const handleDelete = (id: number) => {
     dispatch({ type: 'REMOVE_FOOD_ITEM', payload: id });
@@ -37,6 +52,11 @@ const HomeScreen = () => {
       <View style={styles.infoContainer}>
         <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Spent Today</Text>
         <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{totalCost.toFixed(2)}</Text>
+      </View>
+
+      <View style={styles.infoContainer}>
+        <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Left for Spending Today</Text>
+        <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{moneyLeft.toFixed(2)}</Text>
       </View>
 
       <View style={styles.statsContainer}>

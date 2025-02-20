@@ -1,14 +1,32 @@
-import React from 'react';
-import { View, Text, StyleSheet, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../context/ThemeContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SettingsScreen = () => {
   const { theme, toggleTheme } = useTheme();
   const { currency, setCurrency } = useCurrency();
   const isDarkMode = theme === 'dark';
+  const [dailyBudget, setDailyBudget] = useState('');
+
+  useEffect(() => {
+    // Fetch the daily budget from AsyncStorage
+    const fetchDailyBudget = async () => {
+      const budget = await AsyncStorage.getItem('dailyBudget');
+      if (budget) {
+        setDailyBudget(budget);
+      }
+    };
+    fetchDailyBudget();
+  }, []);
+
+  const handleSetDailyBudget = async () => {
+    await AsyncStorage.setItem('dailyBudget', dailyBudget);
+    alert('Daily Budget Set!');
+  };
 
   return (
     <View style={[styles.container, isDarkMode && styles.darkContainer]}>
@@ -36,6 +54,24 @@ const SettingsScreen = () => {
             <Picker.Item label="INR" value="₹" />
           </Picker>
         </View>
+      </View>
+
+      <View style={[styles.card, isDarkMode && styles.darkCard]}>
+        <View style={styles.pickerContainer}>
+          <Ionicons name="wallet" size={24} color={isDarkMode ? '#fff' : '#333'} />
+          <Text style={[styles.pickerLabel, isDarkMode && styles.darkPickerLabel]}>Daily Budget</Text>
+          <TextInput
+            style={[styles.input, isDarkMode && styles.darkInput]}
+            placeholder={`Daily Budget (${currency})`}
+            placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+            value={dailyBudget}
+            onChangeText={setDailyBudget}
+            keyboardType="numeric"
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSetDailyBudget}>
+          <Text style={styles.buttonText}>Set</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -111,6 +147,34 @@ const styles = StyleSheet.create({
   },
   darkPicker: {
     color: '#fff',
+  },
+  input: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    fontFamily: 'Roboto_400Regular',
+  },
+  darkInput: {
+    borderColor: '#555',
+    backgroundColor: '#444',
+    color: '#fff',
+  },
+  button: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontFamily: 'Roboto_700Bold',
   },
 });
 
