@@ -10,6 +10,7 @@ interface FoodItem {
   cost: number;
 }
 
+
 interface State {
   foodItems: FoodItem[];
   quickAddItems: FoodItem[];

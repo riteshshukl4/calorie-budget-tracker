@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
   },
   darkTabBar: {
-    backgroundColor: '#333',
+    backgroundColor: '#22242E',
     borderTopColor: '#555',
   },
   tab: {

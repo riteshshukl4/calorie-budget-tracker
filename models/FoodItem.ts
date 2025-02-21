@@ -1,5 +1,5 @@
 export interface FoodItem {
-  id: string;
+  id: string; // Change this from number to string
   name: string;
   calories: number;
   protein: number;

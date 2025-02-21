@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTabBar from './components/CustomTabBar';
@@ -6,8 +6,8 @@ import { FoodProvider } from './context/FoodContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
-import AppLoading from 'expo-app-loading';
-import { Text } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
 const AddFoodItemScreen = lazy(() => import('./screens/AddFoodItemScreen'));
@@ -17,14 +17,34 @@ const SettingsScreen = lazy(() => import('./screens/SettingsScreen'));
 
 const Tab = createBottomTabNavigator();
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
   });
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const prepare = async () => {
+      try {
+        // Perform any necessary loading tasks here
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate a loading task
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setIsReady(true);
+        SplashScreen.hideAsync();
+      }
+    };
+
+    prepare();
+  }, []);
+
+  if (!fontsLoaded || !isReady) {
+    return null;
   }
 
   return (
@@ -75,3 +95,11 @@ export default function App() {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

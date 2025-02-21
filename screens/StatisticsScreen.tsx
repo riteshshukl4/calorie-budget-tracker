@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useCurrency } from '../context/CurrencyContext';
 import { useFoodContext } from '../context/FoodContext';
 import { useTheme } from '../context/ThemeContext';
+import { FoodItem } from '../models/FoodItem';
 
 const StatisticsScreen = () => {
   const { currency } = useCurrency();
   const { state: { foodItems } } = useFoodContext();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().split('T')[0].slice(0, 7));
+  const [itemsForSelectedMonth, setItemsForSelectedMonth] = useState<FoodItem[]>([]);
 
-  const filterItemsByDate = (date: string) => {
-    return foodItems.filter(item => item.date === date);
-  };
+  useEffect(() => {
+    const filterItemsByMonth = (month: string) => {
+      return foodItems.filter(item => item.date.startsWith(month)).map(item => ({
+        ...item,
+        id: item.id.toString(), // Ensure id is a string
+      }));
+    };
 
-  const itemsForSelectedDate = filterItemsByDate(selectedDate);
+    setItemsForSelectedMonth(filterItemsByMonth(selectedMonth));
+  }, [selectedMonth, foodItems]);
 
-  const totalCost = itemsForSelectedDate.reduce((sum, item) => sum + item.cost, 0);
-  const totalCalories = itemsForSelectedDate.reduce((sum, item) => sum + item.calories, 0);
-  const totalProtein = itemsForSelectedDate.reduce((sum, item) => sum + item.protein, 0);
+  const totalCost = itemsForSelectedMonth.reduce((sum, item) => sum + item.cost, 0);
+  const totalCalories = itemsForSelectedMonth.reduce((sum, item) => sum + item.calories, 0);
+  const totalProtein = itemsForSelectedMonth.reduce((sum, item) => sum + item.protein, 0);
 
   return (
     <View style={[styles.container, isDarkMode && styles.darkContainer]}>
       <Calendar
-        onDayPress={(day: { dateString: string }) => setSelectedDate(day.dateString)}
+        onMonthChange={(month: { dateString: string; }) => setSelectedMonth(month.dateString.slice(0, 7))}
         markedDates={{
-          [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+          [selectedMonth]: { selected: true, marked: true, selectedColor: 'blue' },
         }}
         theme={{
           calendarBackground: isDarkMode ? '#333' : '#fff',
@@ -62,21 +69,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#2A2C38',
     padding: 16,
   },
   darkContainer: {
     backgroundColor: '#333',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    fontFamily: 'Roboto_700Bold',
-    marginBottom: 20,
-  },
-  darkTitle: {
-    color: '#fff',
   },
   statBlock: {
     alignItems: 'center',
