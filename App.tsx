@@ -8,6 +8,7 @@ import { CurrencyProvider } from './context/CurrencyContext';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
 import { Text, View, StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
+import { Ionicons } from '@expo/vector-icons';
 
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
 const AddFoodItemScreen = lazy(() => import('./screens/AddFoodItemScreen'));
@@ -58,35 +59,67 @@ export default function App() {
                   name="Home"
                   component={HomeScreen}
                   options={{ 
+                    tabBarLabel: '',
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons name="home" color={color} size={size} />
+                    ),
                     headerTitle: 'Welcome User', 
                     headerTitleStyle: { fontWeight: 'bold' },
                     headerTitleAlign: 'center' // Center align the header title
                   }}
                 />
-                <Tab.Screen name="Quick Add" component={QuickAddScreen} 
-                 options={{ 
-                  headerTitle: 'Quick Add', 
-                  headerTitleStyle: { fontWeight: 'bold' },
-                  headerTitleAlign: 'center' // Center align the header title
-                }}/>
-                <Tab.Screen name="Add Food" component={AddFoodItemScreen} 
-                 options={{ 
-                  headerTitle: 'Add Food Item', 
-                  headerTitleStyle: { fontWeight: 'bold' },
-                  headerTitleAlign: 'center' // Center align the header title
-                }}/>
-                <Tab.Screen name="Statistics" component={StatisticsScreen} 
-                 options={{ 
-                  headerTitle: 'Statistics', 
-                  headerTitleStyle: { fontWeight: 'bold' },
-                  headerTitleAlign: 'center' // Center align the header title
-                }}/>
-                <Tab.Screen name="Settings" component={SettingsScreen} 
-                 options={{ 
-                  headerTitle: 'Settings', 
-                  headerTitleStyle: { fontWeight: 'bold' },
-                  headerTitleAlign: 'center' // Center align the header title
-                }}/>
+                <Tab.Screen
+                  name="Quick Add"
+                  component={QuickAddScreen}
+                  options={{ 
+                    tabBarLabel: '',
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons name="fast-food" color={color} size={size} />
+                    ),
+                    headerTitle: 'Quick Add', 
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerTitleAlign: 'center' // Center align the header title
+                  }}
+                />
+                <Tab.Screen
+                  name="Add Food"
+                  component={AddFoodItemScreen}
+                  options={{ 
+                    tabBarLabel: '',
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons name="add-circle" color={color} size={size} />
+                    ),
+                    headerTitle: 'Add Food Item', 
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerTitleAlign: 'center' // Center align the header title
+                  }}
+                />
+                <Tab.Screen
+                  name="Statistics"
+                  component={StatisticsScreen}
+                  options={{ 
+                    tabBarLabel: '',
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons name="stats-chart" color={color} size={size} />
+                    ),
+                    headerTitle: 'Statistics', 
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerTitleAlign: 'center' // Center align the header title
+                  }}
+                />
+                <Tab.Screen
+                  name="Settings"
+                  component={SettingsScreen}
+                  options={{ 
+                    tabBarLabel: '',
+                    tabBarIcon: ({ color, size }) => (
+                      <Ionicons name="settings" color={color} size={size} />
+                    ),
+                    headerTitle: 'Settings', 
+                    headerTitleStyle: { fontWeight: 'bold' },
+                    headerTitleAlign: 'center' // Center align the header title
+                  }}
+                />
               </Tab.Navigator>
             </Suspense>
           </NavigationContainer>

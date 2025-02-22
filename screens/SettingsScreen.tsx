@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Switch, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Switch, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useTheme } from '../context/ThemeContext';
 import { useCurrency } from '../context/CurrencyContext';
@@ -11,16 +11,20 @@ const SettingsScreen = () => {
   const { currency, setCurrency } = useCurrency();
   const isDarkMode = theme === 'dark';
   const [dailyBudget, setDailyBudget] = useState('');
+  const [calorieGoal, setCalorieGoal] = useState('');
+  const [proteinGoal, setProteinGoal] = useState('');
 
   useEffect(() => {
-    // Fetch the daily budget from AsyncStorage
-    const fetchDailyBudget = async () => {
+    // Fetch the daily budget, calorie goal, and protein goal from AsyncStorage
+    const fetchSettings = async () => {
       const budget = await AsyncStorage.getItem('dailyBudget');
-      if (budget) {
-        setDailyBudget(budget);
-      }
+      const calorie = await AsyncStorage.getItem('calorieGoal');
+      const protein = await AsyncStorage.getItem('proteinGoal');
+      if (budget) setDailyBudget(budget);
+      if (calorie) setCalorieGoal(calorie);
+      if (protein) setProteinGoal(protein);
     };
-    fetchDailyBudget();
+    fetchSettings();
   }, []);
 
   const handleSetDailyBudget = async () => {
@@ -28,8 +32,18 @@ const SettingsScreen = () => {
     alert('Daily Budget Set!');
   };
 
+  const handleSetCalorieGoal = async () => {
+    await AsyncStorage.setItem('calorieGoal', calorieGoal);
+    alert('Calorie Goal Set!');
+  };
+
+  const handleSetProteinGoal = async () => {
+    await AsyncStorage.setItem('proteinGoal', proteinGoal);
+    alert('Protein Goal Set!');
+  };
+
   return (
-    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <ScrollView contentContainerStyle={[styles.container, isDarkMode && styles.darkContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkTitle]}>Settings</Text>
       
       <View style={[styles.card, isDarkMode && styles.darkCard]}>
@@ -57,9 +71,8 @@ const SettingsScreen = () => {
       </View>
 
       <View style={[styles.card, isDarkMode && styles.darkCard]}>
-        <View style={styles.pickerContainer}>
+        <View style={styles.inputContainer}>
           <Ionicons name="wallet" size={24} color={isDarkMode ? '#fff' : '#333'} />
-          <Text style={[styles.pickerLabel, isDarkMode && styles.darkPickerLabel]}>Daily Budget</Text>
           <TextInput
             style={[styles.input, isDarkMode && styles.darkInput]}
             placeholder={`Daily Budget (${currency})`}
@@ -73,13 +86,47 @@ const SettingsScreen = () => {
           <Text style={styles.buttonText}>Set</Text>
         </TouchableOpacity>
       </View>
-    </View>
+
+      <View style={[styles.card, isDarkMode && styles.darkCard]}>
+        <View style={styles.inputContainer}>
+          <Ionicons name="flame" size={24} color={isDarkMode ? '#fff' : '#333'} />
+          <TextInput
+            style={[styles.input, isDarkMode && styles.darkInput]}
+            placeholder="Calorie Goal"
+            placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+            value={calorieGoal}
+            onChangeText={setCalorieGoal}
+            keyboardType="numeric"
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSetCalorieGoal}>
+          <Text style={styles.buttonText}>Set</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={[styles.card, isDarkMode && styles.darkCard]}>
+        <View style={styles.inputContainer}>
+          <Ionicons name="nutrition" size={24} color={isDarkMode ? '#fff' : '#333'} />
+          <TextInput
+            style={[styles.input, isDarkMode && styles.darkInput]}
+            placeholder="Protein Goal (g)"
+            placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+            value={proteinGoal}
+            onChangeText={setProteinGoal}
+            keyboardType="numeric"
+          />
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleSetProteinGoal}>
+          <Text style={styles.buttonText}>Set</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f8f9fa',
@@ -148,12 +195,18 @@ const styles = StyleSheet.create({
   darkPicker: {
     color: '#fff',
   },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
   input: {
+    flex: 1,
     height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 16,
     paddingHorizontal: 16,
     backgroundColor: '#fff',
     fontFamily: 'Roboto_400Regular',

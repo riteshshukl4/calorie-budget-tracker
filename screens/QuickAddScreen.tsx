@@ -12,7 +12,7 @@ const QuickAddScreen = () => {
   };
 
   const handleAddToHome = (item: { id: number; name: string; calories: number; protein: number; cost: number }) => {
-    dispatch({ type: 'ADD_FOOD_ITEM', payload: item });
+    dispatch({ type: 'ADD_FOOD_ITEM', payload: { ...item, date: new Date().toISOString() } });
     handleDelete(item.id);
   };
 
@@ -22,7 +22,7 @@ const QuickAddScreen = () => {
         <Text style={styles.itemText}>{item.name}</Text>
         <Text style={styles.itemSubText}>Calories: {item.calories}</Text>
         <Text style={styles.itemSubText}>Protein: {item.protein}g</Text>
-        <Text style={styles.itemSubText}>Cost: ${item.cost}</Text>
+        <Text style={styles.itemSubText}>Cost: {currency}{item.cost}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => handleAddToHome(item)} style={styles.addButton}>
@@ -38,7 +38,12 @@ const QuickAddScreen = () => {
   return (
     <View style={styles.container}>
       {quickAddItems.length === 0 ? (
-        <Text style={styles.noItemsText}>No quick items added yet :(</Text>
+        <View style={styles.noItemsContainer}>
+          <Text style={styles.noItemsText}>No quick items added yet :(</Text>
+          <TouchableOpacity style={styles.quickAddButton}>
+            <Text style={styles.quickAddButtonText}>Quick Add</Text>
+          </TouchableOpacity>
+        </View>
       ) : (
         <FlatList
           data={quickAddItems}
@@ -58,18 +63,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f8f9fa',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
-    fontFamily: 'Roboto_700Bold',
-    marginBottom: 16,
+  noItemsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   noItemsText: {
     fontSize: 18,
     color: '#888',
     textAlign: 'center',
-    marginTop: 20,
+    marginBottom: 20,
+  },
+  quickAddButton: {
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  quickAddButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   item: {
     flexDirection: 'row',
