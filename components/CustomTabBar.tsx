@@ -41,7 +41,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => 
               case 'Home':
                 return focused ? 'home' : 'home-outline';
               case 'Quick Add':
-                return focused ? 'fast-food' : 'fast-food-outline';
+                return focused ? 'heart' : 'heart-outline';
               case 'Add Food':
                 return focused ? 'add-circle' : 'add-circle-outline';
               case 'Statistics':

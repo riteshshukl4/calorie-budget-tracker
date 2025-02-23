@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useTheme } from '../context/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HomeScreen = () => {
+import { NavigationProp } from '@react-navigation/native';
+
+const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const { state: { foodItems }, dispatch } = useFoodContext();
   const { currency } = useCurrency();
   const { theme } = useTheme();
@@ -13,8 +15,6 @@ const HomeScreen = () => {
   const [dailyBudget, setDailyBudget] = useState(0);
 
   useEffect(() => {
-    // Fetch the daily budget from settings or context
-    // For simplicity, let's assume it's stored in local storage
     const fetchDailyBudget = async () => {
       const budget = await AsyncStorage.getItem('dailyBudget');
       if (budget) {
@@ -23,6 +23,15 @@ const HomeScreen = () => {
     };
     fetchDailyBudget();
   }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: isDarkMode ? '#1c1c1e' : '#f8f9fa',
+      },
+      headerTintColor: isDarkMode ? '#f2f2f7' : '#333',
+    });
+  }, [isDarkMode, navigation]);
 
   const totalCost = foodItems.reduce((sum, item) => sum + item.cost, 0);
   const totalCalories = foodItems.reduce((sum, item) => sum + item.calories, 0);
@@ -49,22 +58,23 @@ const HomeScreen = () => {
 
   return (
     <View style={[styles.container, isDarkMode && styles.darkContainer]}>
-      <View style={styles.infoContainer}>
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <View style={[styles.infoContainer, isDarkMode && styles.darkInfoContainer]}>
         <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Spent Today</Text>
         <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{totalCost.toFixed(2)}</Text>
       </View>
 
-      <View style={styles.infoContainer}>
+      <View style={[styles.infoContainer, isDarkMode && styles.darkInfoContainer]}>
         <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Left for Spending Today</Text>
         <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{moneyLeft.toFixed(2)}</Text>
       </View>
 
       <View style={styles.statsContainer}>
-        <View style={styles.statBlock}>
+        <View style={[styles.statBlock, isDarkMode && styles.darkStatBlock]}>
           <Text style={[styles.statText, isDarkMode && styles.darkStatText]}>Calories Consumed</Text>
           <Text style={[styles.statValue, isDarkMode && styles.darkStatValue]}>{totalCalories}</Text>
         </View>
-        <View style={styles.statBlock}>
+        <View style={[styles.statBlock, isDarkMode && styles.darkStatBlock]}>
           <Text style={[styles.statText, isDarkMode && styles.darkStatText]}>Protein Intake</Text>
           <Text style={[styles.statValue, isDarkMode && styles.darkStatValue]}>{totalProtein}g</Text>
         </View>
@@ -89,21 +99,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2A2C38',
+    backgroundColor: '#f8f9fa',
     padding: 16,
   },
   darkContainer: {
-    backgroundColor: '#2A2C38',
+    backgroundColor: '#1c1c1e',
   },
   infoContainer: {
     alignItems: 'center',
     padding: 16,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
     marginBottom: 24,
     width: '100%',
-    opacity: 0.2,
+    backgroundColor: '#fff',
+  },
+  darkInfoContainer: {
+    backgroundColor: '#2c2c2e',
+    borderColor: '#3a3a3c',
   },
   infoText: {
     fontSize: 18,
@@ -112,7 +126,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   darkInfoText: {
-    color: '#fff',
+    color: '#f2f2f7',
   },
   infoValue: {
     fontSize: 20,
@@ -122,7 +136,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   darkInfoValue: {
-    color: '#fff',
+    color: '#f2f2f7',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -136,6 +150,11 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     width: '45%',
+    backgroundColor: '#fff',
+  },
+  darkStatBlock: {
+    backgroundColor: '#2c2c2e',
+    borderColor: '#3a3a3c',
   },
   statText: {
     fontSize: 16,
@@ -143,7 +162,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   darkStatText: {
-    color: '#fff',
+    color: '#f2f2f7',
   },
   statValue: {
     fontSize: 20,
@@ -151,7 +170,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   darkStatValue: {
-    color: '#fff',
+    color: '#f2f2f7',
   },
   addedFoodTitle: {
     fontSize: 20,
@@ -161,7 +180,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   darkAddedFoodTitle: {
-    color: '#fff',
+    color: '#f2f2f7',
   },
   noItemsText: {
     fontSize: 18,
@@ -180,9 +199,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     width: '100%',
+    backgroundColor: '#fff',
   },
   darkItem: {
-    borderBottomColor: '#555',
+    borderBottomColor: '#3a3a3c',
+    backgroundColor: '#2c2c2e',
   },
   itemDetails: {
     flex: 1,
@@ -193,7 +214,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   darkItemText: {
-    color: '#fff',
+    color: '#f2f2f7',
   },
   itemSubText: {
     fontSize: 14,

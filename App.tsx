@@ -63,7 +63,7 @@ export default function App() {
                     tabBarIcon: ({ color, size }) => (
                       <Ionicons name="home" color={color} size={size} />
                     ),
-                    headerTitle: 'Welcome User', 
+                    headerTitle: 'Home', 
                     headerTitleStyle: { fontWeight: 'bold' },
                     headerTitleAlign: 'center' // Center align the header title
                   }}
