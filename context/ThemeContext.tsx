@@ -1,21 +1,19 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Appearance, useColorScheme } from 'react-native';
 
-type Theme = 'light' | 'dark';
+const ThemeContext = createContext({
+  theme: 'dark',
+  toggleTheme: () => {},
+});
 
-interface ThemeContextProps {
-  theme: Theme;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
+import { ReactNode } from 'react';
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const colorScheme = useColorScheme();
-  const [theme, setTheme] = useState<Theme>(colorScheme === 'dark' ? 'dark' : 'light');
+  const [theme, setTheme] = useState(colorScheme || 'dark');
 
   useEffect(() => {
-    setTheme(colorScheme === 'dark' ? 'dark' : 'light');
+    setTheme(colorScheme || 'dark');
   }, [colorScheme]);
 
   const toggleTheme = () => {
@@ -29,10 +27,4 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-};
+export const useTheme = () => useContext(ThemeContext);

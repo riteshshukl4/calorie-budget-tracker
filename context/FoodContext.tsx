@@ -8,6 +8,7 @@ interface FoodItem {
   calories: number;
   protein: number;
   cost: number;
+  carbs?: number;
 }
 
 

@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, FlatList, StatusBar } from 'react-native';
 import { useFoodContext } from '../context/FoodContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useTheme } from '../context/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomButton from '../components/CustomButton';
+import CustomInput from '../components/CustomInput';
+import NutrientTracker from '../components/NutrientTracker';
+import { styles, getDynamicStyles } from '../styles/HomeScreenStyles';
 
 import { NavigationProp } from '@react-navigation/native';
+import { darkTheme, lightTheme } from '../styles/themes';
 
 const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const { state: { foodItems }, dispatch } = useFoodContext();
@@ -27,15 +32,16 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   useEffect(() => {
     navigation.setOptions({
       headerStyle: {
-        backgroundColor: isDarkMode ? '#1c1c1e' : '#f8f9fa',
+        backgroundColor: isDarkMode ? darkTheme.background : lightTheme.background,
       },
-      headerTintColor: isDarkMode ? '#f2f2f7' : '#333',
+      headerTintColor: isDarkMode ? darkTheme.text : lightTheme.text,
     });
   }, [isDarkMode, navigation]);
 
   const totalCost = foodItems.reduce((sum, item) => sum + item.cost, 0);
   const totalCalories = foodItems.reduce((sum, item) => sum + item.calories, 0);
   const totalProtein = foodItems.reduce((sum, item) => sum + item.protein, 0);
+  const totalCarbs = foodItems.reduce((sum, item) => sum + (item.carbs || 0), 0); // Assuming carbs is a property of foodItems
   const moneyLeft = dailyBudget - totalCost;
 
   const handleDelete = (id: number) => {
@@ -43,46 +49,35 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   };
 
   const renderItem = ({ item }: { item: { id: number; name: string; calories: number; protein: number; cost: number } }) => (
-    <View style={[styles.item, isDarkMode && styles.darkItem]}>
+    <View style={[styles.item, getDynamicStyles(isDarkMode).item]}>
       <View style={styles.itemDetails}>
-        <Text style={[styles.itemText, isDarkMode && styles.darkItemText]}>{item.name}</Text>
-        <Text style={[styles.itemSubText, isDarkMode && styles.darkItemSubText]}>Calories: {item.calories}</Text>
-        <Text style={[styles.itemSubText, isDarkMode && styles.darkItemSubText]}>Protein: {item.protein}g</Text>
-        <Text style={[styles.itemSubText, isDarkMode && styles.darkItemSubText]}>Cost: {currency}{item.cost}</Text>
+        <Text style={[styles.itemText, getDynamicStyles(isDarkMode).itemText]}>{item.name}</Text>
+        <Text style={[styles.itemSubText, getDynamicStyles(isDarkMode).itemSubText]}>Calories: {item.calories}</Text>
+        <Text style={[styles.itemSubText, getDynamicStyles(isDarkMode).itemSubText]}>Protein: {item.protein}g</Text>
+        <Text style={[styles.itemSubText, getDynamicStyles(isDarkMode).itemSubText]}>Cost: {currency}{item.cost}</Text>
       </View>
-      <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.deleteButton}>
-        <Text style={styles.deleteButtonText}>Delete</Text>
-      </TouchableOpacity>
+      <CustomButton title="Delete" onPress={() => handleDelete(item.id)} style={getDynamicStyles(isDarkMode).deleteButton} />
     </View>
   );
 
   return (
-    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+    <View style={[styles.container, getDynamicStyles(isDarkMode).container]}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <View style={[styles.infoContainer, isDarkMode && styles.darkInfoContainer]}>
-        <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Spent Today</Text>
-        <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{totalCost.toFixed(2)}</Text>
+      <View style={[styles.infoContainer, getDynamicStyles(isDarkMode).infoContainer]}>
+        <Text style={[styles.infoText, getDynamicStyles(isDarkMode).infoText]}>Money Spent Today</Text>
+        <Text style={[styles.infoValue, getDynamicStyles(isDarkMode).infoValue]}>{currency}{totalCost.toFixed(2)}</Text>
       </View>
 
-      <View style={[styles.infoContainer, isDarkMode && styles.darkInfoContainer]}>
-        <Text style={[styles.infoText, isDarkMode && styles.darkInfoText]}>Money Left for Spending Today</Text>
-        <Text style={[styles.infoValue, isDarkMode && styles.darkInfoValue]}>{currency}{moneyLeft.toFixed(2)}</Text>
+      <View style={[styles.infoContainer, getDynamicStyles(isDarkMode).infoContainer]}>
+        <Text style={[styles.infoText, getDynamicStyles(isDarkMode).infoText]}>Money Left for Spending Today</Text>
+        <Text style={[styles.infoValue, getDynamicStyles(isDarkMode).infoValue]}>{currency}{moneyLeft.toFixed(2)}</Text>
       </View>
 
-      <View style={styles.statsContainer}>
-        <View style={[styles.statBlock, isDarkMode && styles.darkStatBlock]}>
-          <Text style={[styles.statText, isDarkMode && styles.darkStatText]}>Calories Consumed</Text>
-          <Text style={[styles.statValue, isDarkMode && styles.darkStatValue]}>{totalCalories}</Text>
-        </View>
-        <View style={[styles.statBlock, isDarkMode && styles.darkStatBlock]}>
-          <Text style={[styles.statText, isDarkMode && styles.darkStatText]}>Protein Intake</Text>
-          <Text style={[styles.statValue, isDarkMode && styles.darkStatValue]}>{totalProtein}g</Text>
-        </View>
-      </View>
+      <NutrientTracker totalCalories={totalCalories} totalProtein={totalProtein} totalCarbs={totalCarbs} />
 
-      <Text style={[styles.addedFoodTitle, isDarkMode && styles.darkAddedFoodTitle]}>Added Food Items</Text>
+      <Text style={[styles.addedFoodTitle, getDynamicStyles(isDarkMode).addedFoodTitle]}>Added Food Items</Text>
       {foodItems.length === 0 ? (
-        <Text style={[styles.noItemsText, isDarkMode && styles.darkNoItemsText]}>No added items yet.</Text>
+        <Text style={[styles.noItemsText, getDynamicStyles(isDarkMode).noItemsText]}>No added items yet.</Text>
       ) : (
         <FlatList
           data={foodItems}
@@ -93,145 +88,5 @@ const HomeScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f8f9fa',
-    padding: 16,
-  },
-  darkContainer: {
-    backgroundColor: '#1c1c1e',
-  },
-  infoContainer: {
-    alignItems: 'center',
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    marginBottom: 24,
-    width: '100%',
-    backgroundColor: '#fff',
-  },
-  darkInfoContainer: {
-    backgroundColor: '#2c2c2e',
-    borderColor: '#3a3a3c',
-  },
-  infoText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#333',
-  },
-  darkInfoText: {
-    color: '#f2f2f7',
-  },
-  infoValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 8,
-    color: '#333',
-  },
-  darkInfoValue: {
-    color: '#f2f2f7',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-  statBlock: {
-    alignItems: 'center',
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    width: '45%',
-    backgroundColor: '#fff',
-  },
-  darkStatBlock: {
-    backgroundColor: '#2c2c2e',
-    borderColor: '#3a3a3c',
-  },
-  statText: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#333',
-  },
-  darkStatText: {
-    color: '#f2f2f7',
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  darkStatValue: {
-    color: '#f2f2f7',
-  },
-  addedFoodTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 24,
-    marginBottom: 16,
-    color: '#333',
-  },
-  darkAddedFoodTitle: {
-    color: '#f2f2f7',
-  },
-  noItemsText: {
-    fontSize: 18,
-    color: '#888',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  darkNoItemsText: {
-    color: '#aaa',
-  },
-  item: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    width: '100%',
-    backgroundColor: '#fff',
-  },
-  darkItem: {
-    borderBottomColor: '#3a3a3c',
-    backgroundColor: '#2c2c2e',
-  },
-  itemDetails: {
-    flex: 1,
-  },
-  itemText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  darkItemText: {
-    color: '#f2f2f7',
-  },
-  itemSubText: {
-    fontSize: 14,
-    color: '#555',
-  },
-  darkItemSubText: {
-    color: '#aaa',
-  },
-  deleteButton: {
-    backgroundColor: '#ff4444',
-    padding: 8,
-    borderRadius: 4,
-  },
-  deleteButtonText: {
-    color: '#fff',
-    fontSize: 14,
-  },
-});
 
 export default HomeScreen;
