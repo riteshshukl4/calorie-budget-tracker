@@ -9,6 +9,9 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/
 import { Text, View, StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
+import toastConfig from './styles/toastConfig';
+
 
 const HomeScreen = lazy(() => import('./screens/HomeScreen'));
 const AddFoodItemScreen = lazy(() => import('./screens/AddFoodItemScreen'));
@@ -53,6 +56,7 @@ export default function App() {
       <CurrencyProvider>
         <FoodProvider>
           <NavigationContainer>
+          <Toast config ={toastConfig} />
             <Suspense fallback={<Text>Loading...</Text>}>
               <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}>
                 <Tab.Screen

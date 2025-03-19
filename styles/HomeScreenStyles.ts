@@ -78,12 +78,29 @@ export const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 4,
   },
+  customHeader: {
+    height: 60,
+    backgroundColor: '#6200EE', // Example color, adjust as needed
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4, // Add shadow for Android
+    shadowColor: '#000', // Add shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
 });
 
 export const getDynamicStyles = (isDarkMode: any) => ({
   container: {
     backgroundColor: isDarkMode ? darkTheme.background : lightTheme.background,
   },
+  
   infoContainer: {
     backgroundColor: isDarkMode ? darkTheme.card : lightTheme.card,
     borderColor: isDarkMode ? darkTheme.border : lightTheme.border,
@@ -122,5 +139,15 @@ export const getDynamicStyles = (isDarkMode: any) => ({
   },
   deleteButton: {
     backgroundColor: darkTheme.danger,
+  },
+  headerTitle: {
+    color: isDarkMode ? '#fff' : '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  customHeader: {
+    backgroundColor: isDarkMode ? '#222' : '#ddd',
+    padding: 10,
+    borderRadius: 5,
   },
 });

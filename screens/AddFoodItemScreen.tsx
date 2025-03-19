@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import CustomHeader from '../components/CustomHeader';
 import { useFoodContext } from '../context/FoodContext';
 import { useCurrency } from '../context/CurrencyContext';
 import { useTheme } from '../context/ThemeContext';
@@ -45,48 +46,52 @@ const AddFoodItemScreen = () => {
     setProtein('');
     setCost('');
   };
+  
 
   return (
-    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
-      <Text style={[styles.title, isDarkMode && styles.darkTitle]}>Add Food Item</Text>
-      <TextInput
-        style={[styles.input, isDarkMode && styles.darkInput]}
-        placeholder="Name"
-        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
-        value={name}
-        onChangeText={setName}
-      />
-      <TextInput
-        style={[styles.input, isDarkMode && styles.darkInput]}
-        placeholder="Calories"
-        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
-        value={calories}
-        onChangeText={setCalories}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={[styles.input, isDarkMode && styles.darkInput]}
-        placeholder="Protein (g)"
-        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
-        value={protein}
-        onChangeText={setProtein}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={[styles.input, isDarkMode && styles.darkInput]}
-        placeholder={`Cost (${currency})`}
-        placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
-        value={cost}
-        onChangeText={setCost}
-        keyboardType="numeric"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleAddFood}>
-        <Text style={styles.buttonText}>Add Food</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.quickAddButton]} onPress={handleQuickAdd}>
-        <Text style={styles.buttonText}>Quick Add</Text>
-      </TouchableOpacity>
-      <Text style={[styles.currency, isDarkMode && styles.darkCurrency]}>Current Currency: {currency}</Text>
+    <View style={{ flex: 1 }}>
+      <CustomHeader title="Add Food Item" isDarkMode={isDarkMode} />
+      <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+        <Text style={[styles.title, isDarkMode && styles.darkTitle]}>Add Food Item</Text>
+        <TextInput
+          style={[styles.input, isDarkMode && styles.darkInput]}
+          placeholder="Name"
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+          value={name}
+          onChangeText={setName}
+        />
+        <TextInput
+          style={[styles.input, isDarkMode && styles.darkInput]}
+          placeholder="Calories"
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+          value={calories}
+          onChangeText={setCalories}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={[styles.input, isDarkMode && styles.darkInput]}
+          placeholder="Protein (g)"
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+          value={protein}
+          onChangeText={setProtein}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={[styles.input, isDarkMode && styles.darkInput]}
+          placeholder={`Cost (${currency})`}
+          placeholderTextColor={isDarkMode ? '#aaa' : '#888'}
+          value={cost}
+          onChangeText={setCost}
+          keyboardType="numeric"
+        />
+        <TouchableOpacity style={styles.button} onPress={handleAddFood}>
+          <Text style={styles.buttonText}>Add Food</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.quickAddButton]} onPress={handleQuickAdd}>
+          <Text style={styles.buttonText}>Quick Add</Text>
+        </TouchableOpacity>
+        <Text style={[styles.currency, isDarkMode && styles.darkCurrency]}>Current Currency: {currency}</Text>
+      </View>
     </View>
   );
 };

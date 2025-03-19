@@ -10,6 +10,7 @@ const AddedFoodItemsScreen = () => {
   const handleDelete = (id: number) => {
     dispatch({ type: 'REMOVE_FOOD_ITEM', payload: id });
   };
+  
 
   const renderItem = ({ item }: { item: { id: number; name: string; calories: number; protein: number; cost: number } }) => (
     <View style={styles.item}>
